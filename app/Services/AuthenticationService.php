@@ -15,7 +15,7 @@ class AuthenticationService {
         return User::create($payload);
     }
 
-    public function login(array $credentials)
+    public function login(array $credentials): array
     {
         if(!Auth::attempt($credentials)) {
             throw new WrongCredentialsException('Invalid email or password', 422);
@@ -23,11 +23,11 @@ class AuthenticationService {
 
         $token = Auth::user()->createToken('user_token')->plainTextToken;
 
-        return response()->json([
+        return [
             'id' => Auth::id(),
             'name' => Auth::user()->name,
             'email' => Auth::user()->email,
             'token' => $token,
-        ]);
+        ];
     }
 }

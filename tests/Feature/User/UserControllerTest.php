@@ -30,6 +30,8 @@ class UserControllerTest extends TestCase
         
         $response = $this->json('POST', route('users.login'), $this->userPayload);
         $response->assertSuccessful();
+
+        $response->assertJsonStructure(['id', 'name', 'email', 'token']);
     }
 
     private function register() {
