@@ -34,7 +34,7 @@ class UserController extends Controller
         $credentials = $request->only('email', 'password');
 
         if(!Auth::attempt($credentials)) {
-            throw new WrongCredentialsException('Invalid email or password');
+            throw new WrongCredentialsException('Invalid email or password', 422);
         }
 
         $token = Auth::user()->createToken('user_token')->plainTextToken;
