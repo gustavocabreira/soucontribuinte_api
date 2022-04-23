@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Exception;
+use App\Http\Requests\GetEntidadeRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -25,11 +25,37 @@ class EntidadeController extends Controller
         $response = Http::post($this->endpoint . "/api.php", $params);
 
         if($response->failed()) {
-            throw new Exception('Failed when fetching ufs', 500);
+            throw new \Exception('Failed when fetching ufs', 500);
         }
 
         $ufs = collect($response->json()['data']);
         
         return response()->json($ufs, 200);
+    }
+
+    public function index(GetEntidadeRequest $request)
+    {
+        $params = [
+            'ocorrencia' => 'listarEntidades'
+        ];
+
+        $response = Http::post($this->endpoint . "/api.php", $params);
+
+        if($response->failed()) {
+            throw new \Exception('Failed when fetching ufs', 500);
+        }
+
+        $entidades = collect($response->json()['data']);
+
+        if($request->input('uf')) {
+            $uf = $request->input('uf');
+
+            $entidades = $entidades->filter(function($entidade) use($uf) {
+                return strtoupper($entidade['state']) === strtoupper($uf);
+            })->values();
+        }
+
+        return response()->json($entidades, 200);
+
     }
 }

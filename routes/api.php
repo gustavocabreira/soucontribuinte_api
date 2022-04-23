@@ -23,6 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::middleware('auth:sanctum')->name('entidades.')->group(function() {
     Route::prefix('entidades')->group(function() {
         Route::get('uf', [EntidadeController::class, 'getUf'])->name('getUf');
+        Route::get('', [EntidadeController::class, 'index'])->name('index');
     });
 });
 
