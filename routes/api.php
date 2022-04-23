@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\EntidadeController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +18,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::middleware('auth:sanctum')->name('entidades.')->group(function() {
+    Route::prefix('entidades')->group(function() {
+        Route::get('uf', [EntidadeController::class, 'getUf'])->name('getUf');
+    });
 });
 
 Route::post('register', [UserController::class, 'register'])->name('users.create');
