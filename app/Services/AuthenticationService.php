@@ -10,9 +10,16 @@ class AuthenticationService {
 
     public function __construct() {}
 
-    public function registerUser(array $payload): User
+    public function registerUser(array $payload): array
     {
-        return User::create($payload);
+        $user = User::create($payload);
+
+        $token = $this->generateToken($user);
+
+        $user = $user->toArray();
+        $user['token'] = $token;
+
+        return $user;
     }
 
     public function login(array $credentials): array
@@ -21,7 +28,7 @@ class AuthenticationService {
             throw new WrongCredentialsException('Invalid email or password', 422);
         }
 
-        $token = Auth::user()->createToken('user_token')->plainTextToken;
+        $token = $this->generateToken(Auth::user());
 
         return [
             'id' => Auth::id(),
@@ -29,5 +36,10 @@ class AuthenticationService {
             'email' => Auth::user()->email,
             'token' => $token,
         ];
+    }
+
+    private function generateToken(User $user): string
+    {
+        return $user->createToken('user_token')->plainTextToken;
     }
 }
